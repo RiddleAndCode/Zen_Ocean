@@ -31,8 +31,10 @@ def run_scenario():
     token_address = data_token.address
     print(token_address)
 
-    '''
-    date_created = "2020-12-01T10:55:11Z"
+
+# the market is created here.,... we have to fix this.
+
+    date_created = "2021-03-29T10:55:11Z"
     service_attributes = {
             "main": {
             "name": "dataAssetAccessServiceAgreement",
@@ -42,19 +44,24 @@ def run_scenario():
             "cost": 1.0, # <don't change, this is obsolete>
         }
     }
-    service_endpoint = DataServiceProvider.get_url(ocean.config)
-    download_service = ServiceDescriptor.access_service_descriptor(service_attributes, service_endpoint)
     metadata =  {
         "main": {
-            "type": "dataset", "name": "S1Seven", "author": "Hannes", 
+            "type": "dataset", "name": "S1Seven", "author": "RIDDLE&CODE", 
             "license": "CC0: Public Domain", "dateCreated": date_created, 
             "files": [
-                { "index": 0, "contentType": "application/zip", "url": "https://s3.amazonaws.com/datacommons-seeding-us-east/10_Monkey_Species_Small/assets/training.zip"},
-                { "index": 1, "contentType": "text/text", "url": "https://s3.amazonaws.com/datacommons-seeding-us-east/10_Monkey_Species_Small/assets/monkey_labels.txt"},
-                { "index": 2, "contentType": "application/zip", "url": "https://s3.amazonaws.com/datacommons-seeding-us-east/10_Monkey_Species_Small/assets/validation.zip"}]}
+                { "index": 0, "contentType": "application/zip", "url": "https://s3.amazonaws.com/datacommons-seeding-us-east/10_Monkey_Species_Small/assets/training.zip" },
+                { "index": 1, "contentType": "text/text", "url": "https://s3.amazonaws.com/datacommons-seeding-us-east/10_Monkey_Species_Small/assets/monkey_labels.txt" },
+                { "index": 2, "contentType": "application/zip", "url": "https://s3.amazonaws.com/datacommons-seeding-us-east/10_Monkey_Species_Small/assets/validation.zip" },
+            ]
+        }
     }
     
-    
+
+  
+    service_endpoint = DataServiceProvider.get_url(ocean.config)
+    download_service = ServiceDescriptor.access_service_descriptor(service_attributes, service_endpoint)     
+
+
     asset = ocean.assets.create(metadata, wallet, service_descriptors=[download_service], data_token_address=token_address)
     assert token_address == asset.data_token_address
     did = asset.did  
@@ -62,6 +69,10 @@ def run_scenario():
     
     data_token.mint_tokens(wallet.address, 100.0, wallet)
     print(data_token.address)
+    
+    #from ocean_lib.models.btoken import BToken #BToken is ERC20
+    #OCEAN_token = BToken(ocean.OCEAN_address)
+    #assert OCEAN_token.balanceOf(wallet.address) > 0, "need OCEAN"
 
     pool = ocean.pool.create(
         token_address,
@@ -71,5 +82,8 @@ def run_scenario():
     )
     pool_address = pool.address
     print(f'DataToken @{data_token.address} has a `pool` available @{pool_address}')
-    
-    '''
+  
+    #Print values that we use in the next step
+    print(f"token_address = '{token_address}'")
+    print(f"did = '{did}'")
+    print(f"pool_address = '{pool_address}'")
