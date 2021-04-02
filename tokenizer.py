@@ -3,9 +3,7 @@ from pydantic import BaseModel
 
 from os import listdir
 from os.path import isfile, join
-
-import json
-
+from zenruntime_ocean import tokenize
 
 tags_metadata = [
     {
@@ -23,10 +21,8 @@ app = FastAPI(
     openapi_tags=tags_metadata
 )
 
-    
-
-@app.get("/configurations", tags=["Tokenizer"])
-def get_token( datahash : str ):
-    
-    return data 
+@app.get("/tokenize", tags=["Tokenizer"])
+def get_token( data_hash : str ):
+    token = tokenize( data_hash )
+    return { "token": token }
 
