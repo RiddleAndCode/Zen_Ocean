@@ -11,7 +11,8 @@ from ocean_utils.agreements.service_factory import ServiceDescriptor
 from ocean_lib.web3_internal.contract_handler import ContractHandler
 from ocean_lib.web3_internal.wallet import Wallet
 
-def run_scenario():
+def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
+    print( 'pyHASH: '+ data_hash )
     config = Config('config.ini')
     ocean = Ocean(config)
     wallet = Wallet(ocean.web3, 0x376e05899a4ae00463a3a607c774069b7d6a647860dba723f39b735c91238ddf, None, "EARLYTOBEDANDEARLYTORISE")
@@ -26,7 +27,7 @@ def run_scenario():
     print(config.artifacts_path)
     
     
-    data_token = ocean.create_data_token('S1Seven', 'S1SV', from_wallet=wallet)
+    data_token = ocean.create_data_token( token_name, token_symbol , from_wallet=wallet)
     print(f'created new datatoken with address {data_token.address}')
     token_address = data_token.address
     print(token_address)
@@ -34,7 +35,7 @@ def run_scenario():
 
 # the market is created here.,... we have to fix this.
 
-    date_created = "2021-03-29T10:55:11Z"
+    date_created = "2021-03-30T10:55:11Z"
     service_attributes = {
             "main": {
             "name": "dataAssetAccessServiceAgreement",
@@ -46,12 +47,10 @@ def run_scenario():
     }
     metadata =  {
         "main": {
-            "type": "dataset", "name": "S1Seven", "author": "RIDDLE&CODE", 
+            "type": "dataset", "name": token_name, "author": "RIDDLE&CODE", 
             "license": "CC0: Public Domain", "dateCreated": date_created, 
             "files": [
-                { "index": 0, "contentType": "application/zip", "url": "https://s3.amazonaws.com/datacommons-seeding-us-east/10_Monkey_Species_Small/assets/training.zip" },
-                { "index": 1, "contentType": "text/text", "url": "https://s3.amazonaws.com/datacommons-seeding-us-east/10_Monkey_Species_Small/assets/monkey_labels.txt" },
-                { "index": 2, "contentType": "application/zip", "url": "https://s3.amazonaws.com/datacommons-seeding-us-east/10_Monkey_Species_Small/assets/validation.zip" },
+                { "index": 0, "contentType": "application/json", "url": "http://ds-data-enclave.r3c.network/data/" + data_hash },
             ]
         }
     }
@@ -65,25 +64,28 @@ def run_scenario():
     asset = ocean.assets.create(metadata, wallet, service_descriptors=[download_service], data_token_address=token_address)
     assert token_address == asset.data_token_address
     did = asset.did  
-    print(did) 
+    #print(did) 
     
-    data_token.mint_tokens(wallet.address, 100.0, wallet)
-    print(data_token.address)
+    #data_token.mint_tokens(wallet.address, 100.0, wallet)
+    #print(data_token.address)
     
     #from ocean_lib.models.btoken import BToken #BToken is ERC20
     #OCEAN_token = BToken(ocean.OCEAN_address)
     #assert OCEAN_token.balanceOf(wallet.address) > 0, "need OCEAN"
 
-    pool = ocean.pool.create(
-        token_address,
-        data_token_amount=20.0,
-        OCEAN_amount=2.0,
-        from_wallet=wallet
-    )
-    pool_address = pool.address
-    print(f'DataToken @{data_token.address} has a `pool` available @{pool_address}')
+    #pool = ocean.pool.create(
+    #    token_address,
+    #    data_token_amount=20.0,
+    #    OCEAN_amount=2.0,
+    #    from_wallet=wallet
+    #)
+    #pool_address = pool.address
+    #print(f'DataToken @{data_token.address} has a `pool` available @{pool_address}')
   
     #Print values that we use in the next step
-    print(f"token_address = '{token_address}'")
+    
+    print(f"data_token_address = '{data_token}'")
+    #print(f"asset_token_address = '{token_address}'")
     print(f"did = '{did}'")
-    print(f"pool_address = '{pool_address}'")
+    return token_address
+    #print(f"pool_address = '{pool_address}'")
