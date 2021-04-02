@@ -1,24 +1,23 @@
-import os
-from web3 import Web3
+#create ocean instance
+from ocean_lib.config import Config
 from ocean_lib.ocean.ocean import Ocean
-from ocean_lib.config import Config
-from ocean_lib.config import Config
 from ocean_lib.config_provider import ConfigProvider
-from ocean_lib.ocean.util import get_web3_connection_provider
-from ocean_lib.web3_internal.web3_provider import Web3Provider, CustomHTTPProvider
+
+import os
+from ocean_lib.web3_internal.wallet import Wallet
 from ocean_lib.data_provider.data_service_provider import DataServiceProvider
 from ocean_utils.agreements.service_factory import ServiceDescriptor
-from ocean_lib.web3_internal.contract_handler import ContractHandler
-from ocean_lib.web3_internal.wallet import Wallet
 
 def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
-    print( 'pyHASH: '+ data_hash )
     config = Config('config.ini')
     ocean = Ocean(config)
-    wallet = Wallet(ocean.web3, 0x376e05899a4ae00463a3a607c774069b7d6a647860dba723f39b735c91238ddf, None, "EARLYTOBEDANDEARLYTORISE")
     ConfigProvider.set_config(config)
-    Web3Provider.init_web3(provider=get_web3_connection_provider(config.network_url))
-    ContractHandler.set_artifacts_path(config.artifacts_path)
+    
+    wallet = Wallet(ocean.web3, 0x376e05899a4ae00463a3a607c774069b7d6a647860dba723f39b735c91238ddf, None, "EARLYTOBEDANDEARLYTORISE")
+
+    #Web3Provider.init_web3(provider=get_web3_connection_provider(config.network_url))
+    #ContractHandler.set_artifacts_path(config.artifacts_path)
+    
     print(dir(wallet))
     print(wallet.address)
     print(config.network_url)
@@ -27,11 +26,14 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
     print(config.artifacts_path)
     
     
-    data_token = ocean.create_data_token( token_name, token_symbol , from_wallet=wallet)
-    print(f'created new datatoken with address {data_token.address}')
+    data_token = ocean.create_data_token(
+        token_name, 
+        token_symbol,
+        from_wallet=wallet,
+        blob=ocean.config.metadata_store_url)
+    
     token_address = data_token.address
-    print(token_address)
-
+    print(f'created new datatoken with address {data_token.address}')
 
 # the market is created here.,... we have to fix this.
 
@@ -47,21 +49,25 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
     }
     metadata =  {
         "main": {
-            "type": "dataset", "name": token_name, "author": "RIDDLE&CODE", 
+            "type": "dataset", "name": token_name, "author": "RIDDLE and CODE", 
             "license": "CC0: Public Domain", "dateCreated": date_created, 
             "files": [
-                { "index": 0, "contentType": "application/json", "url": "http://ds-data-enclave.r3c.network/data/" + data_hash },
+                #{ "index": 0, "contentType": "application/json", "url": "http://ds-data-enclave.r3c.network/data/" + data_hash },
+                { "index": 0, "contentType": "application/json", "url": "https://raw.githubusercontent.com/trentmc/branin/master/branin.arff" },
+                
             ]
         }
     }
     
-
-  
     service_endpoint = DataServiceProvider.get_url(ocean.config)
     download_service = ServiceDescriptor.access_service_descriptor(service_attributes, service_endpoint)     
 
-
-    asset = ocean.assets.create(metadata, wallet, service_descriptors=[download_service], data_token_address=token_address)
+    asset = ocean.assets.create(
+        metadata, 
+        wallet,
+        service_descriptors=[download_service], 
+        data_token_address=token_address)
+    
     assert token_address == asset.data_token_address
     did = asset.did  
     #print(did) 
