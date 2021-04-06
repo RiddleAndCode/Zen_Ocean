@@ -10,6 +10,7 @@ ocean-lib = "*"
 lupa = "*"
 fastapi = "*"
 uvicorn = "*"
+typing-extensions = "*"
 
 [requires]
 python_version = "3.6"
