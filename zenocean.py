@@ -66,8 +66,8 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
     did = asset.did  
     #print(did) 
     
-    #data_token.mint_tokens(wallet.address, 100.0, wallet)
-    #print(data_token.address)
+    data_token.mint_tokens(wallet.address, 100.0, wallet)
+    print(data_token.address)
     
     #from ocean_lib.models.btoken import BToken #BToken is ERC20
     #OCEAN_token = BToken(ocean.OCEAN_address)
