@@ -3,7 +3,7 @@ from lupa import LuaRuntime
 from zenocean import run_scenario
 
 
-def tokenize( data_hash :str ):
+def tokenize_local( data_hash :str ):
     lua = LuaRuntime(unpack_returned_tuples=True)
     lg = lua.globals()
     zencode = lua.eval("require('zencode')")
@@ -28,11 +28,21 @@ def tokenize( data_hash :str ):
     '''
 
     lua.execute("zencode:parse(lua_script)")
-    lua.execute("did = zencode:run({}, {})")
+    lua.execute("ret_obj = zencode:run({}, {})")
     g = lua.globals()
-    print( " python : " + g.did )
-    return g.did
+    #print( " python : " + str(g.ret_obj))
+    return g.ret_obj
 
 
-#tokenize( data_hash = "0x12325645756758" )
+def tokenize( data_hash : str ):
+    token = ""
+    ret_obj = tokenize_local( data_hash )
+    if ret_obj['status'] == "Valid":
+        print("Token " + ret_obj["data"])
+        token = ret_obj["data"]
+    else:
+        print("Exception " + ret_obj["data"])
+    return token
 
+
+#print( "TOKEN : " + get_token( "0x98723409873059827405" )  )
