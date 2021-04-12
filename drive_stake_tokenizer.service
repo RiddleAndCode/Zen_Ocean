@@ -1,0 +1,12 @@
+[Unit]
+Description=Tokenizer
+After=network.target
+
+[Service]
+Type=exec 
+ExecStart=pipenv run uvicorn tokenizer:app --host 0.0.0.0 --port 9000 
+WorkingDirectory=/home/ubuntu/Zen_Ocean
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target
