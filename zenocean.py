@@ -1,3 +1,4 @@
+
 import os
 from web3 import Web3
 from ocean_lib.ocean.ocean import Ocean
@@ -66,7 +67,7 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
     did = asset.did  
     #print(did) 
     
-    data_token.mint_tokens(wallet.address, 100.0, wallet)
+    data_token.mint_tokens(wallet.address, 200.0, wallet)
     print(data_token.address)
     
     #from ocean_lib.models.btoken import BToken #BToken is ERC20
@@ -81,11 +82,13 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
     #)
     #pool_address = pool.address
     #print(f'DataToken @{data_token.address} has a `pool` available @{pool_address}')
-  
+ 
     #Print values that we use in the next step
-    
-    print(f"data_token_address = '{data_token}'")
+ 
+    #print(f"data_token_address = '{data_token}'")
     #print(f"asset_token_address = '{token_address}'")
-    print(f"did = '{did}'")
+    #print(f"did = '{did}'")
     return token_address
+    #return ""
     #print(f"pool_address = '{pool_address}'")
+
