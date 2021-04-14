@@ -19,7 +19,7 @@ def tokenize_local( data_hash :str ):
         Given that wallet address is '0x376e05899a4ae00463a3a607c774069b7d6a647860dba723f39b735c91238ddf'
         and that wallet password is 'given'
         and that ocean configuration is 'given'
-        and that the token name is 'Drive&Stake-Token'
+        and that the token name is 'Drive&Stake-Token_1'
         and that the token symbol is 'R3C-DS-T'
         and that the token type is 'dataset'
         and that the license is 'GNU Affero General Public License - AGPL'
