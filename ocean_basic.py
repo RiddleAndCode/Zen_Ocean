@@ -5,7 +5,7 @@ from ocean_lib.ocean.ocean import Ocean
 
 from ocean_lib.config import Config
 from ocean_lib.config import Config
-from ocean_lib.config_provider import ConfigProvider
+#from ocean_lib.config_provider import ConfigProvider
 
 from ocean_lib.ocean.util import get_web3_connection_provider
 
@@ -39,7 +39,7 @@ provider.url = https://provider.rinkeby.v3.dev-ocean.co
 '''
 
 #configure the components
-ConfigProvider.set_config(config)
+#ConfigProvider.set_config(config)
 Web3Provider.init_web3(provider=get_web3_connection_provider(config.network_url))
 ContractHandler.set_artifacts_path(config.artifacts_path)
 

@@ -1,7 +1,7 @@
 #create ocean instance
 from ocean_lib.config import Config
 from ocean_lib.ocean.ocean import Ocean
-from ocean_lib.config_provider import ConfigProvider
+#from ocean_lib.config_provider import ConfigProvider
 
 
 def test():
@@ -11,7 +11,7 @@ def test():
 
 
 
-	ConfigProvider.set_config(config)
+	#ConfigProvider.set_config(config)
 
 	#Alice's wallet
 	import os
