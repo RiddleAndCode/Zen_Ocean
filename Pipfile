@@ -7,7 +7,7 @@ verify_ssl = true
 
 [packages]
 ocean-lib = "*"
-lupa = "*"
+lupa = "==1.9"
 fastapi = "*"
 uvicorn = "*"
 typing-extensions = "*"

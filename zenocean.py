@@ -16,7 +16,7 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
     try:
         config = Config('config.ini')
         ocean = Ocean(config)
-        wallet = Wallet(ocean.web3, "0x376e05899a4ae00463a3a607c774069b7d6a647860dba723f39b735c91238ddf")
+        wallet = Wallet(ocean.web3, "b36504e44a35cff35a9fc80df9a9cee366f2058b73fe2a3fa0deab40347125f6")
         #ConfigProvider.set_config(config)
         #Web3Provider.init_web3(provider=get_web3_connection_provider(config.network_url))
         #ContractHandler.set_artifacts_path(config.artifacts_path)
@@ -31,7 +31,7 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
         print(f'created new datatoken with address {data_token.address}')
         token_address = data_token.address
         print(token_address)
-        '''
+        
         # the market is created here.,... we have to fix this.
         date_created = "2021-03-30T10:55:11Z"
         service_attributes = {
@@ -76,7 +76,7 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
         #print(f'DataToken @{data_token.address} has a `pool` available @{pool_address}')
     
         #Print values that we use in the next step
-        '''
+        
         return  {"status": "Valid", "data":token_address}
 
     except Exception as e:
