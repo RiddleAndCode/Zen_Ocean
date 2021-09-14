@@ -11,6 +11,7 @@ from ocean_lib.data_provider.data_service_provider import DataServiceProvider
 from ocean_utils.agreements.service_factory import ServiceDescriptor
 #from ocean_lib.web3_internal.contract_handler import ContractHandler
 from ocean_lib.web3_internal.wallet import Wallet
+from ocean_lib.models.btoken import BToken #BToken is ERC20
 
 def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
     try:
@@ -62,18 +63,17 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
         data_token.mint_tokens(wallet.address, 200.0, wallet)
         print(data_token.address)
         
-        #from ocean_lib.models.btoken import BToken #BToken is ERC20
-        #OCEAN_token = BToken(ocean.OCEAN_address)
-        #assert OCEAN_token.balanceOf(wallet.address) > 0, "need OCEAN"
+        OCEAN_token = BToken(ocean.web3, ocean.OCEAN_address)
+        assert OCEAN_token.balanceOf(wallet.address) > 0, "need OCEAN"
         
-        #pool = ocean.pool.create(
-        #    token_address,
-        #    data_token_amount=20.0,
-        #    OCEAN_amount=2.0,
-        #    from_wallet=wallet
-        #)
-        #pool_address = pool.address
-        #print(f'DataToken @{data_token.address} has a `pool` available @{pool_address}')
+        pool = ocean.pool.create(
+            token_address,
+            data_token_amount=200.0,
+            OCEAN_amount=5.0,
+            from_wallet=wallet
+        )
+        pool_address = pool.address
+        print(f'DataToken @{data_token.address} has a `pool` available @{pool_address}')
     
         #Print values that we use in the next step
         
