@@ -12,12 +12,20 @@ from ocean_utils.agreements.service_factory import ServiceDescriptor
 #from ocean_lib.web3_internal.contract_handler import ContractHandler
 from ocean_lib.web3_internal.wallet import Wallet
 from ocean_lib.models.btoken import BToken #BToken is ERC20
+from ocean_lib.web3_internal.currency import to_wei
+import json
+
+def get_config():
+    f = open('config.json')
+    config = json.load(f)
+    f.close()
+    return config
 
 def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
     try:
         config = Config('config.ini')
         ocean = Ocean(config)
-        wallet = Wallet(ocean.web3, "b36504e44a35cff35a9fc80df9a9cee366f2058b73fe2a3fa0deab40347125f6")
+        wallet = Wallet(ocean.web3, "b36504e44a35cff35a9fc80df9a9cee366f2058b73fe2a3fa0deab40347125f6", config.block_confirmations)
         #ConfigProvider.set_config(config)
         #Web3Provider.init_web3(provider=get_web3_connection_provider(config.network_url))
         #ContractHandler.set_artifacts_path(config.artifacts_path)
@@ -49,8 +57,13 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
                 "type": "dataset", "name": token_name, "author": "RIDDLE&CODE", 
                 "license": "CC0: Public Domain", "dateCreated": date_created, 
                 "files": [
-                    { "index": 0, "contentType": "application/json", "url": "http://ds-tokenizer.r3c.network:8000/data/" + data_hash },
-                ]
+                    { "index": 0, "contentType": "application/json", "url": get_config()["data_url"] + data_hash },
+                ],
+                "name": "Drive&Stake - CEVT - Test car CAN data"
+            },
+            "additionalInformation": {
+                "description": 'Raw CAN data dump provided by a CEVT vehicle, based on a DBC file selection.\n\nFollowing the R&C Drive&Stake (patent pending) process for accessing the CAN data in a confidential way, tokenising the predefined dataset and publishing automatically in the Ocean Data Market.\n\nThis is the first publication for validating the process with CEVT, and the result of a proof of concept together with CEVT. Liberating CAN data access for machines in a confidential environment and attesting the origin and integrity with our crypto devices, for tokenisation and more...',
+                "tags": ["CEVT", "RiddleandCode", "CAN-Data", "Car", "Drive&Stake"]
             }
         }
         
@@ -60,7 +73,7 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
         assert token_address == asset.data_token_address
         did = asset.did   
         
-        data_token.mint_tokens(wallet.address, 200.0, wallet)
+        data_token.mint(wallet.address, to_wei(200), wallet)
         print(data_token.address)
         
         OCEAN_token = BToken(ocean.web3, ocean.OCEAN_address)
@@ -68,8 +81,8 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
         
         pool = ocean.pool.create(
             token_address,
-            data_token_amount=200.0,
-            OCEAN_amount=5.0,
+            data_token_amount=to_wei(200),
+            OCEAN_amount=to_wei(5),
             from_wallet=wallet
         )
         pool_address = pool.address

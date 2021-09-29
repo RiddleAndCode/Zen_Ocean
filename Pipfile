@@ -6,11 +6,11 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-ocean-lib = "*"
 lupa = "==1.9"
 fastapi = "*"
 uvicorn = "*"
 typing-extensions = "*"
+ocean-lib = "*"
 
 [requires]
 python_version = "3.6"
