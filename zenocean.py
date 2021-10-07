@@ -59,11 +59,11 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
                 "files": [
                     { "index": 0, "contentType": "application/json", "url": get_config()["data_url"] + data_hash },
                 ],
-                "name": "Drive&Stake - CEVT - Test car CAN data"
+                "name": "Drive&Stake Test CAN data"
             },
             "additionalInformation": {
-                "description": 'Raw CAN data dump provided by a CEVT vehicle, based on a DBC file selection.\n\nFollowing the R&C Drive&Stake (patent pending) process for accessing the CAN data in a confidential way, tokenising the predefined dataset and publishing automatically in the Ocean Data Market.\n\nThis is the first publication for validating the process with CEVT, and the result of a proof of concept together with CEVT. Liberating CAN data access for machines in a confidential environment and attesting the origin and integrity with our crypto devices, for tokenisation and more...',
-                "tags": ["CEVT", "RiddleandCode", "CAN-Data", "Car", "Drive&Stake"]
+                "description": 'Raw CAN data dump',
+                "tags": [ "RiddleandCode", "CAN-Data", "Car", "Drive&Stake", "DBC"]
             }
         }
         
@@ -90,7 +90,7 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
     
         #Print values that we use in the next step
         
-        return  {"status": "Valid", "data":token_address}
+        return  {"status": "Valid", "data":token_address, "pool": pool_address}
 
     except Exception as e:
         print("Exception: " + str(e)    )
