@@ -2,7 +2,7 @@
 import os
 from web3 import Web3
 from ocean_lib.ocean.ocean import Ocean
-from ocean_lib.config import Config
+from ocean_lib.example_config import ExampleConfig
 #from ocean_lib.config import Config
 #from ocean_lib.config_provider import ConfigProvider
 #from ocean_lib.ocean.util import get_web3_connection_provider
@@ -16,14 +16,12 @@ from ocean_lib.web3_internal.currency import to_wei
 import json
 
 def get_config():
-    f = open('config.json')
-    config = json.load(f)
-    f.close()
+    config = ExampleConfig.get_config('https://rinkeby.infura.io/v3/f0929b471ab04afc8d66a47bb52744f8')
     return config
 
 def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
     try:
-        config = Config('config.ini')
+        config = ExampleConfig.get_config("http://127.0.0.1:8545")
         ocean = Ocean(config)
         wallet = Wallet(ocean.web3, "b36504e44a35cff35a9fc80df9a9cee366f2058b73fe2a3fa0deab40347125f6", config.block_confirmations)
         #ConfigProvider.set_config(config)
