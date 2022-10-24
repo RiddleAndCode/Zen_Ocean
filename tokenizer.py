@@ -1,8 +1,4 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-
-from os import listdir
-from os.path import isfile, join
 from zenruntime_ocean import tokenize
 
 tags_metadata = [
@@ -12,8 +8,6 @@ tags_metadata = [
     },
 ]
 
-app = FastAPI()
-
 app = FastAPI(
     title="Drive&Stake Tokenizer",
     description="This API is to tokenize data on Ocean Protocol.",
@@ -21,8 +15,8 @@ app = FastAPI(
     openapi_tags=tags_metadata
 )
 
-@app.get("/tokenize", tags=["Tokenizer"])
-def get_token( data_hash : str ):
-    token = tokenize( data_hash )
-    return { "token": token }
 
+@app.get("/tokenize", tags=["Tokenizer"])
+def get_token(data_hash: str):
+    token = tokenize(data_hash)
+    return {"token": token}

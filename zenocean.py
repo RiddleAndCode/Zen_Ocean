@@ -1,19 +1,11 @@
 
-import os
-from web3 import Web3
 from ocean_lib.ocean.ocean import Ocean
 from ocean_lib.example_config import ExampleConfig
-#from ocean_lib.config import Config
-#from ocean_lib.config_provider import ConfigProvider
-#from ocean_lib.ocean.util import get_web3_connection_provider
-#from ocean_lib.web3_internal.web3_provider import Web3Provider, CustomHTTPProvider
 from ocean_lib.data_provider.data_service_provider import DataServiceProvider
 from ocean_utils.agreements.service_factory import ServiceDescriptor
-#from ocean_lib.web3_internal.contract_handler import ContractHandler
 from ocean_lib.web3_internal.wallet import Wallet
-from ocean_lib.models.btoken import BToken #BToken is ERC20
+from ocean_lib.models.btoken import BTokenBase #BToken is ERC20
 from ocean_lib.web3_internal.currency import to_wei
-import json
 
 def get_config():
     config = ExampleConfig.get_config('https://rinkeby.infura.io/v3/f0929b471ab04afc8d66a47bb52744f8')
@@ -74,7 +66,7 @@ def run_scenario( data_hash, token_name = "name", token_symbol= "symbol" ):
         data_token.mint(wallet.address, to_wei(200), wallet)
         print(data_token.address)
         
-        OCEAN_token = BToken(ocean.web3, ocean.OCEAN_address)
+        OCEAN_token = BTokenBase(ocean.web3, ocean.OCEAN_address)
         assert OCEAN_token.balanceOf(wallet.address) > 0, "need OCEAN"
         
         pool = ocean.pool.create(
