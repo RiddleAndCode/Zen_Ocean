@@ -1,14 +1,10 @@
-from ocean_lib.models import data_nft_factory
-from ocean_lib.models.data_nft import DataNFT
-from ocean_lib.models.data_nft_factory import DataNFTFactoryContract
 from ocean_lib.ocean.ocean import Ocean
 from ocean_lib.example_config import ExampleConfig
 from ocean_lib.data_provider.data_service_provider import DataServiceProvider
-from ocean_lib.ocean.util import get_address_of_type
 from ocean_lib.web3_internal.wallet import Wallet
-from ocean_lib.models.datatoken import Datatoken
 from ocean_lib.web3_internal.currency import to_wei
-
+from ocean_lib.structures.file_objects import UrlFile
+from ocean_lib.services.service import Service
 
 ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
@@ -34,7 +30,7 @@ def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: s
         print(config.get('PROVIDER_URL'))
 
         data_nft = ocean.create_data_nft(data_nft_name, data_nft_symbol, wallet)
-        data_token = data_nft.create_datatoken(dt_name, dt_symbol, from_wallet=alice_wallet)
+        data_token = data_nft.create_datatoken(dt_name, dt_symbol, from_wallet=wallet)
 
         token_address = data_token.address
         print(token_address)
@@ -65,10 +61,49 @@ def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: s
             }
         }
 
-        service_endpoint = DataServiceProvider.get_url(ocean.config_dict)
-        asset = ocean.assets.create(metadata, wallet, provider_uri=[service_endpoint],
-                                    data_token_address=token_address)
-        assert token_address == asset.data_token_address
+        metadata = {
+            "created": date_created,
+            "updated": date_created,
+            "description": 'Raw CAN data dump',
+            "name": "Drive&Stake Test CAN data",
+            "type": "dataset",
+            "author": "RIDDLE&CODE",
+            "license": "CC0: PublicDomain",
+            "tags": ["RiddleandCode", "CAN-Data", "Car", "Drive&Stake", "DBC"]
+        }
+
+        data_url_file = UrlFile(
+            url=get_config()["data_url"]
+        )
+
+        dataset_files = [data_url_file]
+
+        dataset_compute_values = {
+            "allowRawAlgorithm": False,
+            "allowNetworkAccess": True,
+            "publisherTrustedAlgorithms": [],
+            "publisherTrustedAlgorithmPublishers": [],
+        }
+
+        dataset_compute_service = Service(
+            service_id="2",
+            service_type="compute",
+            service_endpoint=ocean.config_dict["PROVIDER_URL"],
+            datatoken=data_token.address,
+            files=dataset_files,
+            timeout=3600,
+            compute_values=dataset_compute_values,
+        )
+
+        dataset_asset = ocean.assets.create(
+            metadata=metadata,
+            publisher_wallet=wallet,
+            files=dataset_files,
+            services=[dataset_compute_service],
+            data_nft_address=data_nft.address,
+            deployed_datatokens=[data_token],
+        )
+        assert token_address == dataset_asset.data_token_address
 
         data_token.mint(wallet.address, to_wei(200), wallet)
         print(data_token.address)
@@ -95,5 +130,5 @@ def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: s
 
 
 if __name__ == '__main__':
-    run_scenario( "0x376e05899a4ae00463a3a607c774069b7d6a647860dba723f39b735c91238ddf", data_nft_name="Drive&Stake-NFT", data_nft_symbol="R3C-DS-T-NFT", dt_name="Drive&Stake-Token", dt_symbol="R3C-DS-T" )
-
+    run_scenario("0x376e05899a4ae00463a3a607c774069b7d6a647860dba723f39b735c91238ddf", data_nft_name="Drive&Stake-NFT",
+                 data_nft_symbol="R3C-DS-T-NFT", dt_name="Drive&Stake-Token", dt_symbol="R3C-DS-T")
