@@ -1,6 +1,5 @@
 from ocean_lib.ocean.ocean import Ocean
 from ocean_lib.example_config import ExampleConfig
-from ocean_lib.data_provider.data_service_provider import DataServiceProvider
 from ocean_lib.web3_internal.wallet import Wallet
 from ocean_lib.web3_internal.currency import to_wei
 from ocean_lib.structures.file_objects import UrlFile
@@ -37,30 +36,6 @@ def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: s
 
         # the market is created here.,... we have to fix this.
         date_created = "2021-03-30T10:55:11Z"
-        service_attributes = {
-            "main": {
-                "name": "dataAssetAccessServiceAgreement",
-                "creator": wallet.address,
-                "timeout": 3600 * 24,
-                "datePublished": date_created,
-                "cost": 1.0,  # <don't change, this is obsolete>
-            }
-        }
-        metadata = {
-            "main": {
-                "type": "dataset", "name": dt_name, "author": "RIDDLE&CODE",
-                "license": "CC0: Public Domain", "dateCreated": date_created,
-                "files": [
-                    {"index": 0, "contentType": "application/json", "url": get_config()["data_url"] + data_hash},
-                ],
-                "name": "Drive&Stake Test CAN data"
-            },
-            "additionalInformation": {
-                "description": 'Raw CAN data dump',
-                "tags": ["RiddleandCode", "CAN-Data", "Car", "Drive&Stake", "DBC"]
-            }
-        }
-
         metadata = {
             "created": date_created,
             "updated": date_created,
