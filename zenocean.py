@@ -9,13 +9,13 @@ ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 
 def get_config():
-    config = ExampleConfig.get_config('https://eth-goerli.g.alchemy.com/v2/iNxmRj7JGw01fmAmgqh1rbAUyvhmhAmp')
+    config = ExampleConfig.get_config('https://polygon-mumbai.g.alchemy.com/v2/WM8RoyN8pAUKgTswYApVeQTcKIlXWv1l')
     return config
 
 
 def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: str, dt_symbol: str):
     try:
-        config = ExampleConfig.get_config('https://eth-goerli.g.alchemy.com/v2/iNxmRj7JGw01fmAmgqh1rbAUyvhmhAmp')
+        config = ExampleConfig.get_config('https://polygon-mumbai.g.alchemy.com/v2/WM8RoyN8pAUKgTswYApVeQTcKIlXWv1l')
         ocean = Ocean(config)
         wallet = Wallet(ocean.web3, "b36504e44a35cff35a9fc80df9a9cee366f2058b73fe2a3fa0deab40347125f6",
                         ocean.config_dict.get('BLOCK_CONFIRMATIONS'), ocean.config_dict.get('TRANSACTION_TIMEOUT'))
@@ -28,8 +28,7 @@ def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: s
         print(config.get('RPC_URL'))
         print(config.get('PROVIDER_URL'))
 
-        data_nft = ocean.create_data_nft(data_nft_name, data_nft_symbol, wallet)
-        data_token = data_nft.create_datatoken(dt_name, dt_symbol, from_wallet=wallet)
+        data_nft, data_token = create_base_tokens(data_nft_name, data_nft_symbol, dt_name, dt_symbol, ocean, wallet)
 
         token_address = data_token.address
         print(token_address)
@@ -47,9 +46,11 @@ def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: s
             "tags": ["RiddleandCode", "CAN-Data", "Car", "Drive&Stake", "DBC"]
         }
 
-        data_url_file = UrlFile(
-            url=get_config()["data_url"]
-        )
+        # data_url_file = UrlFile(
+        #     url=get_config()["data_url"]
+        # )
+
+        data_url_file = UrlFile(url="18.196.32.197:3000", method="GET", headers={"Content-Type": "application/json", "data-raw": '{"fn": "1667815332222.json"}'})
 
         dataset_files = [data_url_file]
 
@@ -86,24 +87,32 @@ def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: s
         ocean_token = ocean.OCEAN_token
         assert ocean_token.balanceOf(wallet.address) > 0, "need OCEAN"
 
-        pool = ocean.pool.create(
-            token_address,
-            data_token_amount=to_wei(200),
-            OCEAN_amount=to_wei(5),
-            from_wallet=wallet
+        exchange_id = ocean.create_fixed_rate(
+            datatoken=data_token,
+            base_token=ocean_token,
+            amount=ocean.to_wei(200),
+            fixed_rate=ocean.to_wei(5),
+            from_wallet=wallet,
         )
-        pool_address = pool.address
-        print(f'DataToken @{data_token.address} has a `pool` available @{pool_address}')
+
+        print(f'DataToken @{data_token} has a `ExchangeID` available @{exchange_id}')
 
         # Print values that we use in the next step
 
-        return {"status": "Valid", "data": token_address, "pool": pool_address}
+        return {"status": "Valid", "data": token_address, "Exchange_id": exchange_id}
 
     except Exception as e:
         print("Exception: " + str(e))
         return {"status": "NonValid", "data": str(e)}
 
 
+def create_base_tokens(data_nft_name, data_nft_symbol, dt_name, dt_symbol, ocean, wallet):
+
+    data_nft = ocean.create_data_nft(data_nft_name, data_nft_symbol, wallet)
+    data_token = data_nft.create_datatoken(dt_name, dt_symbol, from_wallet=wallet)
+    return data_nft, data_token
+
+
 if __name__ == '__main__':
-    run_scenario("0x376e05899a4ae00463a3a607c774069b7d6a647860dba723f39b735c91238ddf", data_nft_name="Drive&Stake-NFT",
-                 data_nft_symbol="R3C-DS-T-NFT", dt_name="Drive&Stake-Token", dt_symbol="R3C-DS-T")
+    run_scenario("0x376e05899a4ae00463a3a607c774069b7d6a647860dba723f39b735c91238ddf", data_nft_name="test&Stake-NFT",
+                 data_nft_symbol="R3C-DS-T-NFT", dt_name="test&Stake-Token", dt_symbol="R3C-DS-T")
