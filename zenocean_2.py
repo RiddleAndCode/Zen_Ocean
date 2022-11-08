@@ -44,6 +44,7 @@ def run_scenario(data_hash, token_name="name", token_symbol="symbol"):
                 "cost": 1.0,  # <don't change, this is obsolete>
             }
         }
+        '''
         metadata = {
             "main": {
                 "type": "dataset", "name": token_name, "author": "RIDDLE&CODE",
@@ -60,8 +61,7 @@ def run_scenario(data_hash, token_name="name", token_symbol="symbol"):
         }
 
         service_endpoint = DataServiceProvider.get_url(ocean.config)
-        download_service = ServiceDescriptor.access_service_descriptor(service_attributes, service_endpoint)
-        '''
+
         asset = ocean.assets.create(metadata, wallet, service_descriptors=[download_service],
                                     data_token_address=token_address)
         assert token_address == asset.data_token_address
@@ -90,3 +90,69 @@ def run_scenario(data_hash, token_name="name", token_symbol="symbol"):
         return {"status": "NonValid", "data": str(e)}
 
     # run_scenario( "0x376e05899a4ae00463a3a607c774069b7d6a647860dba723f39b735c91238ddf", token_name = "Drive&Stake-Token", token_symbol= "R3C-DS-T" )
+
+
+
+def create_asset_with_order_fee_and_timeout(
+    web3: Web3,
+    config: dict,
+    file: FilesType,
+    data_nft: DataNFT,
+    publisher_wallet: Wallet,
+    publish_market_order_fee_address: str,
+    publish_market_order_fee_token: str,
+    publish_market_order_fee_amount: int,
+    timeout: int,
+) -> Tuple[Asset, Service, Datatoken]:
+
+    # Create datatoken with order fee
+    datatoken = data_nft.create_datatoken(
+        template_index=1,
+        name="Datatoken 1",
+        symbol="DT1",
+        minter=publisher_wallet.address,
+        fee_manager=publisher_wallet.address,
+        publish_market_order_fee_address=publish_market_order_fee_address,
+        publish_market_order_fee_token=publish_market_order_fee_token,
+        publish_market_order_fee_amount=publish_market_order_fee_amount,
+        bytess=[b""],
+        from_wallet=publisher_wallet,
+    )
+
+    data_provider = DataServiceProvider
+    ocean_assets = OceanAssets(config, web3, data_provider)
+    metadata = {
+        "created": "2020-11-15T12:27:48Z",
+        "updated": "2021-05-17T21:58:02Z",
+        "description": "Sample description",
+        "name": "Sample asset",
+        "type": "dataset",
+        "author": "OPF",
+        "license": "https://market.oceanprotocol.com/terms",
+    }
+
+    files = [file]
+
+    # Create service with timeout
+    service = Service(
+        service_id="5",
+        service_type=ServiceTypes.ASSET_ACCESS,
+        service_endpoint=data_provider.get_url(config),
+        datatoken=datatoken.address,
+        files=files,
+        timeout=timeout,
+    )
+
+    # Publish asset #exchange
+    asset = ocean_assets.create(
+        metadata=metadata,
+        publisher_wallet=publisher_wallet,
+        services=[service],
+        data_nft_address=data_nft.address,
+        deployed_datatokens=[datatoken],
+    )
+
+    service = get_first_service_by_type(asset, ServiceTypes.ASSET_ACCESS)
+    dt = Datatoken(web3, asset.datatokens[0]["address"])
+
+    return asset, service, dt
