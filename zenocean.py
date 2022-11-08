@@ -46,9 +46,11 @@ def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: s
             "tags": ["RiddleandCode", "CAN-Data", "Car", "Drive&Stake", "DBC"]
         }
 
-        data_url_file = UrlFile(
-            url=get_config()["data_url"]
-        )
+        # data_url_file = UrlFile(
+        #     url=get_config()["data_url"]
+        # )
+
+        data_url_file = UrlFile(url="18.196.32.197:3000", method="GET", headers={"Content-Type": "application/json", "data-raw": '{"fn": "1667815332222.json"}'})
 
         dataset_files = [data_url_file]
 
