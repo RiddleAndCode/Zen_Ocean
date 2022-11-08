@@ -74,12 +74,13 @@ def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: s
         dataset_asset = ocean.assets.create(
             metadata=metadata,
             publisher_wallet=wallet,
+            provider_uri=ocean.config_dict["PROVIDER_URL"],
             files=dataset_files,
             services=[dataset_compute_service],
             data_nft_address=data_nft.address,
             deployed_datatokens=[data_token],
         )
-        assert token_address == dataset_asset.data_token_address
+        assert token_address == dataset_asset.datatokens[0].get("address")
 
         data_token.mint(wallet.address, to_wei(200), wallet)
         print(data_token.address)
