@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from ocean_lib.ocean.ocean import Ocean
 from ocean_lib.example_config import ExampleConfig
 from ocean_lib.web3_internal.wallet import Wallet
@@ -13,9 +15,9 @@ def get_config():
     return config
 
 
-def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: str, dt_symbol: str):
+def run_scenario(data_url: str, data_nft_name: str, data_nft_symbol: str, dt_name: str, dt_symbol: str):
     try:
-        config = ExampleConfig.get_config('https://polygon-mumbai.g.alchemy.com/v2/WM8RoyN8pAUKgTswYApVeQTcKIlXWv1l')
+        config = get_config()
         ocean = Ocean(config)
         wallet = Wallet(ocean.web3, "b36504e44a35cff35a9fc80df9a9cee366f2058b73fe2a3fa0deab40347125f6",
                         ocean.config_dict.get('BLOCK_CONFIRMATIONS'), ocean.config_dict.get('TRANSACTION_TIMEOUT'))
@@ -34,7 +36,7 @@ def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: s
         print(token_address)
 
         # the market is created here.,... we have to fix this.
-        date_created = "2021-03-30T10:55:11Z"
+        date_created = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
         metadata = {
             "created": date_created,
             "updated": date_created,
@@ -50,7 +52,8 @@ def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: s
         #     url=get_config()["data_url"]
         # )
 
-        data_url_file = UrlFile(url="18.196.32.197:3000", method="GET", headers={"Content-Type": "application/json", "data-raw": '{"fn": "1667815332222.json"}'})
+        # data_url_file = UrlFile(url="18.196.32.197:3000", method="GET", headers={"Content-Type": "application/json", "data-raw": '{"fn": "1667815332222.json"}'})
+        data_url_file = UrlFile(url=data_url, method="GET", headers={"Content-Type": "application/json"})
 
         dataset_files = [data_url_file]
 
@@ -85,12 +88,9 @@ def run_scenario(data_hash, data_nft_name: str, data_nft_symbol: str, dt_name: s
         data_token.mint(wallet.address, to_wei(200), wallet)
         print(data_token.address)
 
-        ocean_token = ocean.OCEAN_token
-        assert ocean_token.balanceOf(wallet.address) > 0, "need OCEAN"
-
         exchange_id = ocean.create_fixed_rate(
             datatoken=data_token,
-            base_token=ocean_token,
+            base_token=ocean.OCEAN_token,
             amount=ocean.to_wei(200),
             fixed_rate=ocean.to_wei(5),
             from_wallet=wallet,
