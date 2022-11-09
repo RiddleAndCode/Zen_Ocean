@@ -65,8 +65,8 @@ def run_scenario(data_url: str, data_nft_name: str, data_nft_symbol: str, dt_nam
         }
 
         dataset_compute_service = Service(
-            service_id="2",
-            service_type="compute",
+            service_id="0",
+            service_type="access",
             service_endpoint=ocean.config_dict["PROVIDER_URL"],
             datatoken=data_token.address,
             files=dataset_files,
