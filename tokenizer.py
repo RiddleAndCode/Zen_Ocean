@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 
-from zenocean import run_scenario
-from zenruntime_ocean import tokenize
+from zenocean import R3COceanTokenizer, OceanParameters
 
 tags_metadata = [
     {
@@ -17,14 +16,13 @@ app = FastAPI(
     openapi_tags=tags_metadata
 )
 
+CONF_PATH = "https://polygon-mumbai.g.alchemy.com/v2/WM8RoyN8pAUKgTswYApVeQTcKIlXWv1l"
+WALLET_PRIVATE_KEY = "b36504e44a35cff35a9fc80df9a9cee366f2058b73fe2a3fa0deab40347125f6"
 
-@app.get("/tokenize", tags=["Tokenizer"])
-def get_token(data_hash: str):
-    token = tokenize(data_hash)
-    return {"token": token}
+r3c_tokenizer_service = R3COceanTokenizer(CONF_PATH, WALLET_PRIVATE_KEY)
 
 
-@app.get("/tokenize/url", tags=["Tokenizer"])
-def get_token(data_url: str, data_nft_name: str, data_nft_symbol: str, dt_name: str, dt_symbol: str):
-    token = run_scenario(data_url, data_nft_name, data_nft_symbol, dt_name, dt_symbol)
+@app.post("/tokenize/url", tags=["Tokenizer"], )
+def create_token_with_url(params: OceanParameters):
+    token = r3c_tokenizer_service.create_data_token_by_url(params)
     return {"token": token}
