@@ -1,9 +1,6 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
 
-from os import listdir
-from os.path import isfile, join
-from zenruntime_ocean import tokenize
+from zenocean import R3COceanTokenizer, OceanParameters
 
 tags_metadata = [
     {
@@ -12,8 +9,6 @@ tags_metadata = [
     },
 ]
 
-app = FastAPI()
-
 app = FastAPI(
     title="Drive&Stake Tokenizer",
     description="This API is to tokenize data on Ocean Protocol.",
@@ -21,8 +16,13 @@ app = FastAPI(
     openapi_tags=tags_metadata
 )
 
-@app.get("/tokenize", tags=["Tokenizer"])
-def get_token( data_hash : str ):
-    token = tokenize( data_hash )
-    return { "token": token }
+CONF_PATH = "https://polygon-mumbai.g.alchemy.com/v2/WM8RoyN8pAUKgTswYApVeQTcKIlXWv1l"
+WALLET_PRIVATE_KEY = "b36504e44a35cff35a9fc80df9a9cee366f2058b73fe2a3fa0deab40347125f6"
 
+r3c_tokenizer_service = R3COceanTokenizer(CONF_PATH, WALLET_PRIVATE_KEY)
+
+
+@app.post("/tokenize/url", tags=["Tokenizer"], )
+def create_token_with_url(params: OceanParameters):
+    token = r3c_tokenizer_service.create_data_token_by_url(params)
+    return {"token": token}
