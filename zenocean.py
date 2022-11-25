@@ -27,7 +27,7 @@ class OceanParameters(BaseModel):
     data_nft_symbol: str
     dt_name: str
     dt_symbol: str
-    metadata: dict
+    metadata: OceanMetadata
     fixed_price: int
 
 
@@ -71,7 +71,7 @@ class R3COceanTokenizer:
             timeout=3600,
         )
         dataset_asset = self.ocean.assets.create(
-            metadata=metadata,
+            metadata=metadata.dict(),
             publisher_wallet=self.wallet,
             files=dataset_files,
             services=[dataset_compute_service],
@@ -112,18 +112,19 @@ def get_config(address: str) -> dict:
 #
 #     r3c_tokenizer_service = R3COceanTokenizer(conf_path, wallet_private_key)
 #
-#     data_url = "http://18.196.32.197:3000/get/1667815332222.json"
-#     data_nft_name = "test&test-NFT"
+#     # data_url = "http://18.196.32.197:3000/get/1668599050954.json"
+#     data_url = "https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1d"
+#     data_nft_name = "Drive&Stake-NFT"
 #     data_nft_symbol = "R3C-DS-T-NFT"
-#     dt_name = "test&test-Token"
+#     dt_name = "Drive&Stake-Token"
 #     dt_symbol = "R3C-DS-T"
 #
 #     date_created = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
 #     metadata = OceanMetadata(
 #         created=date_created,
 #         updated=date_created,
-#         description="test&test",
-#         name="test&test",
+#         description="Raw CAN data dump",
+#         name="Drive&Stake Test CAN Data",
 #         type="dataset",
 #         author="RIDDLE&CODE",
 #         license="CC0: Public Domain",
